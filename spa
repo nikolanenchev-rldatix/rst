@@ -17,7 +17,7 @@ type FSM_States is (IDLE,WAIT_PASSWORD,WRONG_PASS,RIGHT_PASS,STOP);
 signal current_state,next_state: FSM_States;
 signal counter_wait: std_logic_vector(31 downto 0);
 signal red_tmp, green_tmp: std_logic;
-
+//komentar
 begin
 process(clk,reset_n)
 begin
