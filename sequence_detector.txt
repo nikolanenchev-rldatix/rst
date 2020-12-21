@@ -1,0 +1,89 @@
+011001
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity FSM is
+port(	clock: in std_logic;
+	reset: in std_logic;
+	sequence_in: in std_logic;
+	detector_out: out std_logic;
+);
+end FSM;
+
+architecture behv of FSM is
+type MOORE_FSM is (Zero, ZeroOne, ZeroOneOne, ZeroOneOneZero, ZeroOneOneZeroZero, ZeroOneOneZeroZeroOne);
+signal current_state, next_state: MOORE_FSM;
+begin
+	process(clock, reset)
+	begin
+		if (reset = '1') then
+			current_state <= Zero;
+		elsif (rising_edge(clock)) then
+			current_state <= next_state;
+		end if;
+	end process;
+
+	process (current_state, sequence_in)
+	begin
+		care current_state is
+			when Zero =>
+				if (sequence_in = '1') then
+					next_state <= ZeroOne;
+				else
+					next_state <= Zero;
+				end if;
+			when ZeroOne =>
+				if (sequence_in = '1') then
+					next_state <= ZeroOneOne;
+				else
+					next_state <= Zero;
+				end if;
+			when ZeroOneOne =>
+				if (sequence_in = '1') then
+					next_state <= Zero
+				else
+					next_state <= ZeroOneOneZero
+				end if;
+			when ZeroOneOneZero =>
+				if (sequence_in = '1') then
+					next_state <= ZeroOne;
+				else
+					next_state <= ZeroOneOneZeroZero
+				end if;
+			when ZeroOneOneZeroZero =>
+				if (sequence_in = '1') then
+					next_state <= ZeroOneOneZeroZeroOne
+				else
+					next_state <= Zero;
+				end if;
+			when ZeroOneOneZeroZeroOne =>
+				if (sequence_in = '1') then
+					next_state <= ZeroOneOne;
+				else
+					next_state <= Zero;
+				end if;
+		end case;
+	end process;
+
+	process (current_state)
+	begin
+		case current_state is
+			when Zero =>
+				detector_out <= '0';
+			when ZeroOne =>
+				detector_out <= '0';
+			when ZeroOneOne =>
+				detector_out <= '0';
+			when ZeroOneOneZero =>
+				detector_out <= '0';
+			when ZeroOneOneZeroZero =>
+				detector_out <= '0';
+			when ZeroOneOneZeroZeroOne =>
+				detector_out <= '1';
+		end case;
+	end process;
+end behv;
+
+
+
